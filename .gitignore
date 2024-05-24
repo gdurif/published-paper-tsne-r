@@ -1,9 +1,20 @@
-/.quarto/
-/.joblib
-/_extensions/
-published-paper-tsne.html
-published-paper-tsne.ipynb
-published-paper-tsne.tex
-published-paper-tsne_files/
+.Rhistory
+.Rprofile
+.Rapp.history
+.RData
+.Ruserdata
+/*.Rcheck/
+.Rproj.user/
+*_cache/
+/cache/
+*_files/
 
+renv/
+
+/.quarto/
+/_extensions/
+
+published-paper-tsne.html
+published-paper-tsne.pdf
+published-paper-tsne.tex
 
