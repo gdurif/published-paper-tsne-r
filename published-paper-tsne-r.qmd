@@ -680,171 +680,20 @@ optimization, we performed Newton's method for 500 iterations.
 ## Results {#sec-results}
 
 ::: {.callout-note}
-Note from Computo editor: the following code define functions that will be used to run the various approaches, save/load the results and draw the result graph. In order to save computational time, the code lauching the various approaches is not run during paper build. Results are rather saved into CSV files that are loaded to render the figures.
+Note from Computo editor: the following code define functions that will be used to run the various approaches, save/load the results and draw the result graphs. In order to save computational time, the code lauching the various approaches is not run during paper build. Results are rather saved into CSV files that are loaded to render the figures.
 :::
 
 ```{r requirements}
-## load general purpose packages required for computations
-library(dplyr)
-library(fs)
+## load requirements and source code
+source(file.path("src", "requirements.R"))
+source(file.path("src", "computing-setup.R"))
+source(file.path("src", "saving-setup.R"))
+source(file.path("src", "plot-setup.R"))
 ```
 
-```{r computing-setup}
-## define functions to apply each dimension reduction method
-
-# T-SNE
-library(Rtsne)
-
-#' Run t-SNE and format results
-#' 
-#' @description
-#' Wrapper around [Rtsne::Rtsne()] function.
-#' 
-#' @param X `data.frame` or `matrix` with observations in rows and features 
-#' in columns.
-#' @param n_comp integer, number of dimension for the reduced dimension space,
-#' default is 2.
-#' @param perplexity numeric, perplexity input parameter for t-SNE.
-#' @param class (optional) `data frame` containing the observations 
-#' classes/groups in a column named `class`.
-#'
-#' @return a `data.frame` containing the representation of observations 
-#' in the first two directions in the reduced dimension space and the 
-#' corresponding group/class for each observations (if provided in input).
-run_tsne <- function(X, n_comp = 2, perplexity = 40, class = NULL) {
-    # run t-sne
-    out <- Rtsne(X, dims = n_comp, perplexity = perplexity, pca = TRUE)
-    # extract results
-    res <- data.frame(dim1 = out$Y[,1], dim2 = out$Y[,2])
-    # add class/group of observations
-    if(!is.null(class)) res <- res %>% bind_cols(class)
-    # output
-    return(res)
-}
-
-# Sammon mapping
-library(MASS)
-
-#' Run Sammon mappitng and format results
-#' 
-#' @description
-#' Wrapper around [MASS::sammon()] function.
-#' 
-#' @param X `data.frame` or `matrix` with observations in rows and features 
-#' in columns.
-#' @param n_comp integer, number of dimension for the reduced dimension space,
-#' default is 2.
-#' @param class (optional) `data frame` containing the observations 
-#' classes/groups in a column named `class`.
-#'
-#' @return a `data.frame` containing the representation of observations 
-#' in the first two directions in the reduced dimension space and the 
-#' corresponding group/class for each observations (if provided in input).
-run_sammon <- function(X, n_comp = 2, class = NULL) {
-    # run sammon
-    out <- sammon(dist(X), k = n_comp)
-    # extract results
-    res <- data.frame(dim1 = out$points[,1], dim2 = out$points[,2])
-    # add class/group of observations
-    if(!is.null(class)) res <- res %>% bind_cols(class)
-    # output
-    return(res)
-}
-
-# ISOMAP
-library(RDRToolbox)
-
-#' Run isomap and format results
-#' 
-#' @description
-#' Wrapper around [RDRToolbox::Isomap()] function.
-#' 
-#' @param X `data.frame` or `matrix` with observations in rows and features 
-#' in columns.
-#' @param n_comp integer, number of dimension for the reduced dimension space,
-#' default is 2.
-#' @param k integer, number of neighbors input parameter for 
-#' [RDRToolbox::Isomap()].
-#' @param class (optional) `data frame` containing the observations 
-#' classes/groups in a column named `class`.
-#'
-#' @return a `data.frame` containing the representation of observations 
-#' in the first two directions in the reduced dimension space and the 
-#' corresponding group/class for each observations (if provided in input).
-run_isomap <- function(X, n_comp = 2, k = 12, class = NULL) {
-    # run isomap
-    out <- Isomap(as.matrix(X), dims = n_comp, k = k)
-    # extract results
-    res <- data.frame(dim1 = out$dim2[,1], dim2 = out$dim2[,2])
-    # add class/group of observations
-    if(!is.null(class)) res <- res %>% bind_cols(class)
-    # output
-    return(res)
-}
-
-# LLE
-
-#' Run LLE and format results
-#' 
-#' @description
-#' Wrapper around [RDRToolbox::LLE()] function.
-#' 
-#' @param X `data.frame` or `matrix` with observations in rows and features 
-#' in columns.
-#' @param n_comp integer, number of dimension for the reduced dimension space,
-#' default is 2.
-#' @param k integer, number of neighbors input parameter for 
-#' [RDRToolbox::LLE()].
-#' @param class (optional) vector of observations classes/groups.
-#'
-#' @return a `data.frame` containing the representation of observations 
-#' in the first two directions in the reduced dimension space and the 
-#' corresponding group/class for each observations (if provided in input).
-run_lle <- function(X, n_comp = 2, k = 12, class = NULL) {
-    # run isomap
-    out <- LLE(as.matrix(X), dim = n_comp, k = k)
-    # extract results
-    res <- data.frame(dim1 = out[,1], dim2 = out[,2])
-    # add class/group of observations
-    if(!is.null(class)) res <- res %>% bind_cols(class)
-    # output
-    return(res)
-}
-```
-
-```{r saving-setup}
-## define function to save and load result data frame
-library(readr)
-
-#' Save a data frame into a csv file
-#' 
-#' @description
-#' Wrapper around [readr::write_delim()] function (to use `;` separator in
-#' output csv files).
-#' 
-#' @param df `data.frame` or `matrix` with observations in rows and low 
-#' dimensional features in columns.
-#' @param filename character, name of the file to be saved.
-save_res <- function(df, filename) {
-    write_delim(df, file = filename, delim = ";")
-}
-
-#' Load a data frame from a csv file
-#' 
-#' @description
-#' Wrapper around [readr::read_delim()] function (to use `;` separator in
-#' output csv files).
-#' 
-#' @param filename character, name of the file to be saved.
-#' 
-#' @return df `data.frame` or `matrix` with observations in rows and low 
-#' dimensional features in columns.
-load_res <- function(filename) {
-    out <- read_delim(file = filename, delim = ";", show_col_types = FALSE) %>%
-        mutate(class = as.factor(as.character(class)))
-    return(out)
-}
-```
+::: {.callout-note}
+Note from Computo editor: we sub-samples 2000 images from the MNIST dataset instead of 6000 like in the original publication to save computing time.
+:::
 
 ```{r mnist-data}
 ## load MNIST dataset
@@ -856,15 +705,15 @@ setOMLConfig(
     apikey = "c1994bdb7ecb3c6f3c8f3b35f4b47f1f",      # read-only API key
     cachedir = user_cache_dir(appname = "OpenML")     # user cache dir
 )
-digits <- getOMLDataSet(data.id = 554L)
+mnist <- getOMLDataSet(data.id = 554L)
 
 # extract sub-sample
 set.seed(76987)
-subsample <- sample.int(nrow(digits$data), size = 2000)
+subsample <- sample.int(nrow(mnist$data), size = 2000)
 
 # extract features and corresponding classes
-X <- digits$data %>% dplyr::slice(subsample) %>% dplyr::select(!class)
-y <- digits$data %>% dplyr::slice(subsample) %>% dplyr::select(class)
+X <- mnist$data %>% dplyr::slice(subsample) %>% dplyr::select(!class)
+y <- mnist$data %>% dplyr::slice(subsample) %>% dplyr::select(class)
 ```
 
 ```{r computing-mnist}
@@ -883,31 +732,6 @@ save_res(tsne_out, filename = file.path(res_dir, "mnist_tsne.csv"))
 save_res(sammon_out, filename = file.path(res_dir, "mnist_sammon.csv"))
 save_res(isomap_out, filename = file.path(res_dir, "mnist_isomap.csv"))
 save_res(lle_out, filename = file.path(res_dir, "mnist_lle.csv"))
-```
-
-```{r plot-setup}
-## define plotting function for dimension reduction of MNIST dataset
-library(ggplot2)
-
-#' Plot representation of observations in reduced dimension space.
-#' 
-#' @param df `data.frame` or `matrix` with observations in rows and low 
-#' dimensional features in columns (named as `dim1` and `dim2`) along with 
-#' a `class` column indicating.
-#' @param title (optional) character, plot title.
-#' @return a `ggplot2` graph.
-draw_plot <- function(df, title = NULL, legend = FALSE) {
-    
-    gg <- ggplot(df, aes(dim1, dim2, col = class, shape = class)) + 
-        geom_point() +
-        coord_fixed() +
-        theme_void()
-    
-    if(!is.null(title)) gg <- gg + ggtitle(title)
-    if(!legend) gg <- gg + theme(legend.position="none")
-    
-    return(gg)
-}
 ```
 
 ```{r fig-mnist-tsne-sammon}
