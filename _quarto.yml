@@ -1,7 +1,6 @@
 project:
-  title: "published-paper-tsne"
+  title: "published-paper-tsne-r"
 
 format:
   computo-html:
     code-fold: true
-  
