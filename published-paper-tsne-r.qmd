@@ -913,6 +913,10 @@ draw_plot <- function(df, title = NULL, legend = FALSE) {
 ```{r fig-mnist-tsne-sammon}
 #| label: fig-tsne-sammon
 #| fig-cap: "Visualization by t-SNE and Sammon mapping"
+#| fig-subcap: 
+#|   - ""
+#|   - ""
+#| layout-ncol: 2
 
 ###############################################################################
 # Figure 2. Visualization by t-SNE and Sammon mapping
@@ -935,6 +939,10 @@ draw_plot(sammon_out, title = "Sammon", legend = FALSE) +
 ```{r fig-mnist-isomap-lle}
 #| label: fig-isomap-lle
 #| fig-cap: "Visualization by Isomap and LLE"
+#| fig-subcap: 
+#|   - ""
+#|   - ""
+#| layout-ncol: 2
 
 ###############################################################################
 # Figure 3. Visualization by Isomap and LLE
@@ -996,6 +1004,11 @@ save_res(lle_out, filename = file.path(res_dir, "olivetti_lle.csv"))
 #| label: fig-olivetti
 #| fig-cap: "Visualization of the Olivetti faces data set"
 #| error: false
+#| fig-subcap: 
+#|   - ""
+#|   - ""
+#|   - ""
+#|   - ""
 #| layout-ncol: 2
 
 markers <- c("🞡", "▶", "▲", "▼", "◀", "■", "◆", "🟊", "●", "🟌")
