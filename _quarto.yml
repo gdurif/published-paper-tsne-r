@@ -1,5 +1,7 @@
 project:
   title: "published-paper-tsne-r"
+  render:
+    - published-paper-tsne-r.qmd
 
 format:
   computo-html:
