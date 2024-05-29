@@ -37,6 +37,8 @@ format:
   computo-pdf: default
 execute:
   cache: true
+  error: false
+  warning: false
 ---
 
 ```{r setup}
