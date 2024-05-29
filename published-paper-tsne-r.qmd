@@ -917,6 +917,7 @@ draw_plot <- function(df, title = NULL, legend = FALSE) {
 ###############################################################################
 # Figure 2. Visualization by t-SNE and Sammon mapping
 ###############################################################################
+res_dir <- "results"
 
 # t-SNE manifold learning
 tnse_out <- load_res(file.path(res_dir, "mnist_tsne.csv"))
@@ -961,7 +962,7 @@ Note from Computo editor: the original Olivetti dataset contains 400 images of r
 library(RnavGraphImageData)
 data(faces)
 X <- as.data.frame(t(faces))
-colnames(X) <- paste0("px", 1:ncol(olivetti))
+colnames(X) <- paste0("px", 1:ncol(X))
 
 # label data
 # see https://github.com/jlmelville/snedata/blob/master/R/olivetti.R
@@ -1003,6 +1004,7 @@ colors <- c("black", "blue", "red", "pink")
 ###############################################################################
 # Figure 4. Visualization of the Olivetti faces data set
 ###############################################################################
+res_dir <- "results"
 
 # t-SNE manifold learning
 tnse_out <- load_res(file.path(res_dir, "olivetti_tsne.csv"))
