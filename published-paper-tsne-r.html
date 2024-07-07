@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.53">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -38,7 +38,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -112,7 +112,7 @@ background: #034E79;
       }
 </style>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -127,7 +127,7 @@ background: #034E79;
    });
 }}});
   </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -218,7 +218,7 @@ ISSN 2824-7795</p>
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">June 16, 2024</p>
+        <p class="date-modified">July 7, 2024</p>
       </div>
     </div>
       
@@ -388,7 +388,7 @@ y_t\|^2)^{-1}}
 \frac{\partial C}{\partial y_i} = 4 \sum_j (p_{ij} - q_{ij})(y_i -
 y_j)(1+\|y_i - y_j\|^2)^{-1}\,.
 \tag{5}</span></span></p>
-<div id="fig-gradients" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-gradients" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gradients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="figures/gradients.png" class="img-fluid figure-img">
@@ -402,7 +402,7 @@ Figure&nbsp;1: Gradients of three types of SNE as a function of the pairwise Euc
 <p>First, the t-SNE gradient strongly repels dissimilar datapoints that are modeled by a small pairwise distance in the low-dimensional representation. SNE has such repulsion as well, but its effect is minimal compared to the strong attractions elsewhere in the gradient (the largest attraction in our graphical representation of the gradient is approximately 19, whereas the largest repulsion is approximately 1). In UNI-SNE, the amount of repulsion between dissimilar datapoints is slightly larger, however, this repulsion is only strong when the pairwise distance between the points in the low-dimensional representation is already large (which is often not the case, since the low-dimensional representation is initialized by sampling from a Gaussian with a very small variance that is centered around the origin).</p>
 <p>Second, although t-SNE introduces strong repulsions between dissimilar datapoints that are modeled by small pairwise distances, these repulsions do not go to infinity. In this respect, t-SNE differs from UNI-SNE, in which the strength of the repulsion between very dissimilar datapoints is proportional to their pairwise distance in the low-dimensional map, which may cause dissimilar datapoints to move much too far away from each other.</p>
 <p>Taken together, t-SNE puts emphasis on (1) modeling dissimilar datapoints by means of large pairwise distances, and (2) modeling similar datapoints by means of small pairwise distances. Moreover, as a result of these characteristics of the t-SNE cost function (and as a result of the approximate scale invariance of the Student t-distribution), the optimization of the t-SNE cost function is much easier than the optimization of the cost functions of SNE and UNI-SNE. Specifically, t-SNE introduces long-range forces in the low-dimensional map that can pull back together two (clusters of) similar points that get separated early on in the optimization. SNE and UNI-SNE do not have such long-range forces, as a result of which SNE and UNI-SNE need to use simulated annealing to obtain reasonable solutions. Instead, the long-range forces in t-SNE facilitate the identification of good local optima without resorting to simulated annealing</p>
-<div class="pseudocode-container" data-alg-title="Algorithm" data-pseudocode-index="1">
+<div class="pseudocode-container" data-pseudocode-index="1" data-alg-title="Algorithm">
 <div class="pseudocode">
 \begin{algorithm} \caption{Simple version of t-Distributed Stochastic Neighbor Embeding} \begin{algorithmic} \State \textbf{Data}: high-dimensional representation $\mathcal{X} = \{x_1, \dots, x_n\}$ \State cost function parameters: perplexity $Perp$ \State optimization parameters: number of iterations $T$, learning rate $\eta$, momentum $\alpha(t)$ \State \textbf{Result}: low-dimensional data representation $\mathcal{Y}^{(T)} = \{y_1, \dots, y_n\}$ \Procedure{t-sne}{$Perp, T, \eta, \alpha(t)$} \State compute pairwise affinities $p_{j|i}$ with perplexity $Perp$ (using Equation 1) \State set $p_{ij} = \frac{1}{2n} (p_{j|i} + p_{i|j})$ \State sample initial solution $\mathcal{Y}^{(0)} = \{y_1,\dots,y_n\}$ from $\mathcal{N}(0,1e^{-4} I)$ \For{$t = 0$\dots$T$} \State compute low-dimensional affinities $q_{ij}$ (using Equation 4) \State compute gradient $\frac{\partial C}{\partial \mathcal{Y}}$ (using Equation 5) \State et $\mathcal{Y}^{t} = \mathcal{Y}^{t-1} + \eta \frac{\partial C}{\partial \mathcal{Y}} + \alpha(t) \left(\mathcal{Y}^{t-1} - \mathcal{Y}^{t-2}\right)$ \EndFor \EndProcedure \end{algorithmic} \end{algorithm}
 </div>
@@ -430,7 +430,7 @@ Figure&nbsp;1: Gradients of three types of SNE as a function of the pairwise Euc
 <h2 data-number="4.2" class="anchored" data-anchor-id="sec-experimental_setup"><span class="header-section-number">4.2</span> Experimental Setup</h2>
 <p>In all of our experiments, we start by using PCA to reduce the dimensionality of the data to 30. This speeds up the computation of pairwise distances between the datapoints and suppresses some noise without severely distorting the interpoint distances. We then use each of the dimensionality reduction techniques to convert the 30-dimensional representation to a two-dimensional map and we show the resulting map as a scatterplot. For all of the data sets, there is information about the class of each datapoint, but the class information is only used to select a color and/or symbol for the map points. The class information is not used to determine the spatial coordinates of the map points. The coloring thus provides a way of evaluating how well the map preserves the similarities within each class.</p>
 <p>The cost function parameter settings we employed in our experiments are listed in <a href="#tbl-cost-function-parameters" class="quarto-xref">Table&nbsp;1</a>. In the table, <span class="math inline">Perp</span> represents the perplexity of the conditional probability distribution induced by a Gaussian kernel and <span class="math inline">k</span> represents the number of nearest neighbors employed in a neighborhood graph. In the experiments with Isomap and LLE, we only visualize datapoints that correspond to vertices in the largest connected component of the neighborhood graph. <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> For the Sammon mapping optimization, we performed Newton’s method for 500 iterations.</p>
-<div id="tbl-cost-function-parameters" class="quarto-float anchored">
+<div id="tbl-cost-function-parameters" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cost-function-parameters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Cost function parameter settings for the experiments
@@ -582,25 +582,23 @@ Note
 <div aria-describedby="fig-tsne-sammon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-tsne-sammon" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-tsne-sammon-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-tsne-sammon-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-tsne-sammon-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-tsne-sammon-1.svg" id="fig-tsne-sammon-1" class="img-fluid figure-img" data-ref-parent="fig-tsne-sammon">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-tsne-sammon-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a)
 </figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-tsne-sammon" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-tsne-sammon-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-tsne-sammon-2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-tsne-sammon-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-tsne-sammon-2.svg" id="fig-tsne-sammon-2" class="img-fluid figure-img" data-ref-parent="fig-tsne-sammon">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-tsne-sammon-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b)
 </figcaption>
 </figure>
 </div>
@@ -635,25 +633,23 @@ Figure&nbsp;2: Visualization by t-SNE and Sammon mapping
 <div aria-describedby="fig-isomap-lle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-isomap-lle" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-isomap-lle-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-isomap-lle-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-isomap-lle-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-isomap-lle-1.svg" id="fig-isomap-lle-1" class="img-fluid figure-img" data-ref-parent="fig-isomap-lle">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-isomap-lle-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a)
 </figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-isomap-lle" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-isomap-lle-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-isomap-lle-2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-isomap-lle-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-isomap-lle-2.svg" id="fig-isomap-lle-2" class="img-fluid figure-img" data-ref-parent="fig-isomap-lle">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-isomap-lle-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b)
 </figcaption>
 </figure>
 </div>
@@ -755,25 +751,23 @@ Note
 <div aria-describedby="fig-olivetti-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-olivetti" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-olivetti-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-olivetti-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-olivetti-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-olivetti-1.svg" id="fig-olivetti-1" class="img-fluid figure-img" data-ref-parent="fig-olivetti">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-olivetti-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a)
 </figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-olivetti" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-olivetti-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-olivetti-2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-olivetti-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-olivetti-2.svg" id="fig-olivetti-2" class="img-fluid figure-img" data-ref-parent="fig-olivetti">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-olivetti-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b)
 </figcaption>
 </figure>
 </div>
@@ -781,25 +775,23 @@ Note
 </div>
 <div class="quarto-layout-row">
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-olivetti" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-olivetti-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-olivetti-3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-olivetti-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-olivetti-3.svg" id="fig-olivetti-3" class="img-fluid figure-img" data-ref-parent="fig-olivetti">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-olivetti-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(c)
 </figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-olivetti" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-olivetti-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-olivetti-4" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-olivetti-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="published-paper-tsne-r_files/figure-html/fig-olivetti-4.svg" id="fig-olivetti-4" class="img-fluid figure-img" data-ref-parent="fig-olivetti">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-olivetti-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(d)
 </figcaption>
 </figure>
 </div>
@@ -818,7 +810,7 @@ Figure&nbsp;4: Visualization of the Olivetti faces data set
 <section id="sec-large-data" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Applying t-SNE to Large Data Sets</h1>
 <p>Like many other visualization techniques, t-SNE has a computational and memory complexity that is quadratic in the number of datapoints. This makes it infeasible to apply the standard version of t-SNE to data sets that contain many more than, say, 10,000 points. Obviously, it is possible to pick a random subset of the datapoints and display them using t-SNE, but such an approach fails to make use of the information that the undisplayed datapoints provide about the underlying manifolds. Suppose, for example, that A, B, and C are all equidistant in the high-dimensional space. If there are many undisplayed datapoints between A and B and none between A and C, it is much more likely that A and B are part of the same cluster than A and C. This is illustrated in <a href="#fig-random-walk" class="quarto-xref">Figure&nbsp;5</a>. In this section, we show how t-SNE can be modified to display a random subset of the datapoints (so-called landmark points) in a way that uses information from the entire (possibly very large) data set.</p>
-<div id="fig-random-walk" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-random-walk" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-random-walk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="figures/random-walk.png" class="img-fluid figure-img">
@@ -844,7 +836,7 @@ Note
 <p>Note from Computo editor: Please note that (i) this dataset is too large for the code to be processed through continuous integration ; (ii) we did not reimplement this particular experiment (using random walk-based similarities). Only the result figure is joined.</p>
 </div>
 </div>
-<div id="fig-random-walk-tsne" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-random-walk-tsne" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-random-walk-tsne-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="figures/random-walk-tSNE.png" class="img-fluid figure-img">
@@ -1117,7 +1109,7 @@ L_N x_N = −B^\top.
 <li id="fn7"><p>Isomap and LLE require data that gives rise to a neighborhood graph that is connected.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn8"><p>In preliminary experiments, we found the performance of random walk t-SNE to be very robust under changes of <span class="math inline">k</span>.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@article{van der maaten2008,
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@article{van_der_maaten2008,
   author = {van der Maaten, Laurens and Hinton, Geoffrey},
   publisher = {Société Française de Statistique},
   title = {Visualizing {Data} Using {t-SNE:} A Practical Computo Example
@@ -1149,7 +1141,7 @@ L_N x_N = −B^\top.
     techniques on almost all of the data sets. \textless
     br/\textgreater{}}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-van der maaten2008" class="csl-entry quarto-appendix-citeas" role="listitem">
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-van_der_maaten2008" class="csl-entry quarto-appendix-citeas" role="listitem">
 Maaten, Laurens van der, and Geoffrey Hinton. 2008. <span>“Visualizing
 Data Using t-SNE: A Practical Computo Example (Mock).”</span>
 <em>Computo</em>, August. <a href="https://computo.sfds.asso.fr/published-paper-tsne">https://computo.sfds.asso.fr/published-paper-tsne</a>.
@@ -1190,18 +1182,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1233,7 +1214,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -1292,7 +1295,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
@@ -3058,7 +3061,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb11-1436"><a href="#cb11-1436" aria-hidden="true" tabindex="-1"></a>upper-triangular matrix. Subsequently, the solution to the linear</span>
 <span id="cb11-1437"><a href="#cb11-1437" aria-hidden="true" tabindex="-1"></a>system in Equation @eq-appendixb1 is obtained by solving the</span>
 <span id="cb11-1438"><a href="#cb11-1438" aria-hidden="true" tabindex="-1"></a>linear systems $Cy = −B^\top$ and $C x_N = y$ using a fast</span>
-<span id="cb11-1439"><a href="#cb11-1439" aria-hidden="true" tabindex="-1"></a>backsubstitution method.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-1439"><a href="#cb11-1439" aria-hidden="true" tabindex="-1"></a>backsubstitution method.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <script>
